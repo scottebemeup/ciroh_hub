@@ -30,6 +30,35 @@ and
 (4) a community of practice for the use of advanced research computing and data 
 techniques to further water resource prediction research.
 
+## Water Body Data Resources
+
+The Water Body Data Filtering workflow begins by integrating two primary datasets:
+
+(i) lake boundaries obtained from the North American Environmental Atlas: Lakes and Rivers dataset, 
+Version 4.0, developed by the Commission for Environmental Cooperation (CEC, 2023),
+
+(ii) in situ water-quality observations locations retrieved from the Water Quality Portal 
+(waterqualitydata.us) for the period 2000–2023.
+
+The water-quality dataset was first filtered to retain only monitoring stations with at least 
+30 measurements during the study period, resulting in a dataset of 3,477 stations.
+
+A spatial join was then performed to assign each water-quality monitoring station to the lake polygon 
+in which it was located.
+
+Following the spatial join, approximately 1,600 monitoring stations were found to be located 
+within mapped lake polygons.
+
+The resulting dataset was subsequently filtered to retain only major lakes with a surface area 
+greater than 100 km², yielding water-quality observations for 57 major lakes, including 8 transboundary ones.
+
+Finally, to ensure adequate temporal coverage and statistical robustness for subsequent analyses, 
+only lakes with more than 100 water-quality samples over the study period were retained, 
+resulting in a final dataset of 20 major lakes, including 5 transboundary ones.
+
+![Water Body Data Filter Workflow](./waterbodyworkflow.png)
+
+[Download Water Body Data Sources Spreadsheet](./WQData_sites_with_Lake_info_filtered.xlsx)
 ## Getting Started with HABS Prediction
 
 ## HABS Prediction Resources
