@@ -10,7 +10,7 @@ import { HotTable } from '@handsontable/react-wrapper';
 import 'handsontable/styles/ht-theme-classic.min.css';
 import { registerAllModules } from 'handsontable/registry';
 
-registerAllModules()
+{registerAllModules()}
 
 export function ExcelMdxViewer() {
   const [workbookData, setWorkbookData] = useState(null);
@@ -21,7 +21,11 @@ export function ExcelMdxViewer() {
   // Load and parse local or remote .xlsx file on mount
   useEffect(() => {
     fetch('./WQData_sites_with_Lake_info_filtered.xlsx')
-      .then((res) => res.arrayBuffer())
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.arrayBuffer();
+      })
+	  // .then((res) => res.arrayBuffer())
       .then((buffer) => {
         const wb = XLSX.read(buffer, { type: 'array' });
         setWorkbookData(wb);
@@ -31,6 +35,9 @@ export function ExcelMdxViewer() {
         // Convert first sheet to an array of arrays
         const ws = wb.Sheets[wb.SheetNames[0]];
         setGridData(XLSX.utils.sheet_to_json(ws, { header: 1 }));
+      })
+	  .catch((err) => {
+        setStatus(`Failed: ${err.message}`);
       });
   }, []);
 
@@ -61,6 +68,7 @@ export function ExcelMdxViewer() {
         rowHeaders={true}
         colHeaders={true}
         height="400px"
+		width="600px"
         licenseKey="non-commercial-and-evaluation"
       />
     </div>
@@ -119,6 +127,8 @@ only lakes with more than 100 water-quality samples over the study period were r
 resulting in a final dataset of 20 major lakes, including 5 transboundary ones.
 
 ![Water Body Data Filter Workflow](./waterbodyworkflow.png)
+
+### Water Bodies Data Filtered Spreadsheet
 
 [Download Water Body Data Sources Spreadsheet](./WQData_sites_with_Lake_info_filtered.xlsx)
 
