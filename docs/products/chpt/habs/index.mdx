@@ -4,6 +4,68 @@ title: "Harmful Algal Blooms"
 description: "Testbed Protocols for Predicting Harmful Algal Blooms"
 tags: [Education, NOAA, CHPT, HABS]
 ---
+import React, { useState, useEffect } from 'react';
+import * as XLSX from 'xlsx';
+import { HotTable } from '@handsontable/react-wrapper';
+import 'handsontable/styles/ht-theme-classic.min.css';
+import { registerAllModules } from 'handsontable/registry';
+
+registerAllModules()
+
+export function ExcelMdxViewer() {
+  const [workbookData, setWorkbookData] = useState(null);
+  const [sheetNames, setSheetNames] = useState([]);
+  const [activeSheet, setActiveSheet] = useState('');
+  const [gridData, setGridData] = useState([]);
+
+  // Load and parse local or remote .xlsx file on mount
+  useEffect(() => {
+    fetch('./WQData_sites_with_Lake_info_filtered.xlsx')
+      .then((res) => res.arrayBuffer())
+      .then((buffer) => {
+        const wb = XLSX.read(buffer, { type: 'array' });
+        setWorkbookData(wb);
+        setSheetNames(wb.SheetNames);
+        setActiveSheet(wb.SheetNames[0]);
+        
+        // Convert first sheet to an array of arrays
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        setGridData(XLSX.utils.sheet_to_json(ws, { header: 1 }));
+      });
+  }, []);
+
+  // Handle switching sheets via dropdown
+  const handleSheetChange = (e) => {
+    const newSheet = e.target.value;
+    setActiveSheet(newSheet);
+    if (workbookData) {
+      const ws = workbookData.Sheets[newSheet];
+      setGridData(XLSX.utils.sheet_to_json(ws, { header: 1 }));
+    }
+  };
+
+  return (
+    <div style={{ margin: '20px 0' }}>
+      <div style={{ marginBottom: '10px' }}>
+        <label htmlFor="sheet-select" style={{ marginRight: '8px', fontWeight: 'bold' }}>Active Sheet:</label>
+        <select id="sheet-select" value={activeSheet} onChange={handleSheetChange}>
+          {sheetNames.map((name) => (
+            <option key={name} value={name}>{name}</option>
+          ))}
+        </select>
+      </div>
+
+      <HotTable
+	  	theme="ht-theme-classic"
+        data={gridData}
+        rowHeaders={true}
+        colHeaders={true}
+        height="400px"
+        licenseKey="non-commercial-and-evaluation"
+      />
+    </div>
+  );
+}
 
 # Harmful Algal Bloom Predictions: An Introduction
 
@@ -59,6 +121,9 @@ resulting in a final dataset of 20 major lakes, including 5 transboundary ones.
 ![Water Body Data Filter Workflow](./waterbodyworkflow.png)
 
 [Download Water Body Data Sources Spreadsheet](./WQData_sites_with_Lake_info_filtered.xlsx)
+
+<ExcelMdxViewer />
+
 ## Getting Started with HABS Prediction
 
 ## HABS Prediction Resources
