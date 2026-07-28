@@ -9,6 +9,7 @@ import * as XLSX from 'xlsx';
 import { HotTable } from '@handsontable/react-wrapper';
 import 'handsontable/styles/ht-theme-classic.min.css';
 import { registerAllModules } from 'handsontable/registry';
+import useBaseUrl from "@docusaurus/useBaseUrl"
 
 {registerAllModules()}
 
@@ -17,10 +18,10 @@ export function ExcelMdxViewer() {
   const [sheetNames, setSheetNames] = useState([]);
   const [activeSheet, setActiveSheet] = useState('');
   const [gridData, setGridData] = useState([]);
-
+  const xlsxfile = useBaseUrl("/files/WQData_sites_with_Lake_info_filtered.xlsx")
   // Load and parse local or remote .xlsx file on mount
   useEffect(() => {
-    fetch('./WQData_sites_with_Lake_info_filtered.xlsx')
+      fetch(xlsxfile)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.arrayBuffer();
@@ -68,7 +69,6 @@ export function ExcelMdxViewer() {
         rowHeaders={true}
         colHeaders={true}
         height="400px"
-		width="600px"
         licenseKey="non-commercial-and-evaluation"
       />
     </div>
@@ -126,11 +126,14 @@ Finally, to ensure adequate temporal coverage and statistical robustness for sub
 only lakes with more than 100 water-quality samples over the study period were retained, 
 resulting in a final dataset of 20 major lakes, including 5 transboundary ones.
 
-![Water Body Data Filter Workflow](./waterbodyworkflow.png)
+<img src={useBaseUrl('/img/products/chpt/waterbodyworkflow.png')} alt="WaterBody Workflow" />
 
 ### Water Bodies Data Filtered Spreadsheet
 
-[Download Water Body Data Sources Spreadsheet](./WQData_sites_with_Lake_info_filtered.xlsx)
+<a href={useBaseUrl('/files/WQData_sites_with_Lake_info_filtered.xlsx')} 
+  download="WQData_sites_with_Lake_info_filtered.xlsx">
+  Download Water Body Filtered Data Spreadsheet
+</a>
 
 <ExcelMdxViewer />
 
